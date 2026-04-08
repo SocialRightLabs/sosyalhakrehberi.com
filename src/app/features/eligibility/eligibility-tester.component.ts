@@ -18,13 +18,18 @@ type EligibilityResponse = {
   template: `
     <main class="shell">
       <section class="card">
-        <p class="eyebrow">SocialRightOS Frontend</p>
+        <p class="eyebrow">Sosyal Hak Rehberi</p>
         <h1>Eligibility Tester</h1>
         <p class="subtitle">Frontend renders, backend decides.</p>
         <div class="support-row">
           <a href="https://sosyalhakrehberi.com" target="_blank" rel="noopener">Website</a>
           <a href="https://github.com/sponsors/SocialRightLabs" target="_blank" rel="noopener">Support</a>
           <a href="mailto:info@sosyalhizmetdanismani.com">Contact</a>
+        </div>
+
+        <div class="position-box">
+          <strong>Public value</strong>
+          <p>Understand social-rights eligibility, reduce failed applications, and keep the decision logic in SocialRightOS.</p>
         </div>
 
         <label>
@@ -58,6 +63,11 @@ type EligibilityResponse = {
           <strong>Mission</strong>
           <p>Make social-rights guidance understandable, auditable, and API-driven.</p>
         </div>
+
+        <div class="mission-box">
+          <strong>Support this project</strong>
+          <p>Support helps maintain the platform, keep access low-cost, and expand guidance to more users.</p>
+        </div>
       </section>
     </main>
   `,
@@ -70,6 +80,8 @@ type EligibilityResponse = {
     .subtitle { margin: 0 0 24px; color: #cbd5e1; }
     .support-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
     .support-row a { color: #93c5fd; text-decoration: none; font-size: 14px; }
+    .position-box { margin-bottom: 18px; padding: 16px; border-radius: 14px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.16); }
+    .position-box p { margin: 6px 0 0; color: #cbd5e1; }
     label { display: grid; gap: 8px; margin-bottom: 16px; color: #cbd5e1; font-size: 14px; }
     input { background: #0f172a; color: #f8fafc; border: 1px solid rgba(148, 163, 184, 0.24); border-radius: 12px; padding: 14px 16px; font-size: 16px; }
     button { width: 100%; margin-top: 8px; border: 0; border-radius: 12px; padding: 14px 16px; background: #22c55e; color: #052e16; font-weight: 700; cursor: pointer; }

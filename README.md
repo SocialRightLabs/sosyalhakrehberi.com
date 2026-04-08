@@ -1,8 +1,10 @@
-# Sosyal Hak Rehberi – Dijital Sosyal Haklar Rehberlik Platformu
+# Sosyal Hak Rehberi
 
-Angular-based public frontend for **SocialRightOS**.
+Canonical frontend repository: **SocialRightLabs/sosyalhakrehberi.com**
 
-This app renders the user interface, delegates decisions to the backend API, and is deployed as a static frontend.
+Public frontend for **SocialRightOS**.
+
+This repository renders the public experience, delegates decisions to the backend API, and stays render-only by design.
 
 * Website: [https://sosyalhakrehberi.com/](https://sosyalhakrehberi.com/)
 * Support: [https://github.com/sponsors/SocialRightLabs](https://github.com/sponsors/SocialRightLabs)
@@ -10,158 +12,163 @@ This app renders the user interface, delegates decisions to the backend API, and
 
 ---
 
-## 🌍 What is this?
+## What this is
 
-Sosyal Hak Rehberi, sosyal hakları:
+Sosyal Hak Rehberi is a public guidance platform that helps people understand their social rights in a way that is:
 
-* anlaşılabilir
-* erişilebilir
-* uygulanabilir
+* understandable
+* accessible
+* actionable
 
-hale getirmeyi amaçlayan bir rehberlik platformudur.
+It helps users:
 
-Kullanıcılara:
+* see which benefits may apply to them
+* understand the decision logic
+* get the next step without hidden rules in the UI
 
-* hangi haklara sahip olabileceklerini anlamalarını sağlar
-* karar mantığını açık şekilde gösterir
-* doğru sonraki adımları sunar
-
-> Bu platform resmi bir devlet sistemi değildir, yalnızca rehberlik sağlar.
+> This is not an official government system. It provides guidance only.
 
 ---
 
-## 🎯 Why it exists
+## Why it exists
 
-Birçok birey:
+Many people:
 
-* haklarını bilmez
-* yanlış başvuru yapar
-* karmaşık süreçleri yönetemez
+* do not know which rights they have
+* submit incomplete or incorrect applications
+* struggle with complex public-service workflows
 
-Bu platform:
+This platform exists to:
 
-* hatalı başvuruları azaltmayı
-* farkındalığı artırmayı
-* rehberlik sağlamayı
-
-amaçlar.
+* reduce failed applications
+* improve awareness
+* lower friction for public-benefit access
 
 ---
 
-## 🎯 Mission
+## Mission
 
-Bireylerin sosyal haklarını doğru anlamasını sağlayan açık, yapılandırılmış ve erişilebilir bir rehberlik sistemi sunmak.
+Provide a clear, structured, and accessible guidance system for social-rights eligibility and next-step navigation.
 
-## 🚀 Vision
+## Vision
 
-Milyonlarca kullanıcıya ulaşan, ölçeklenebilir bir **Sosyal Hak İşletim Sistemi** oluşturmak.
+Build a scalable **social-rights operating system** that can serve millions of users.
 
-## 💖 Supporting the Project
+## Public Value
 
-Bu proje kamu yararına bir rehberlik sistemidir.
+This platform:
 
-Destek:
-
-* kaliteyi korumaya
-* altyapıyı sürdürmeye
-* daha fazla kullanıcıya ulaşmaya
-* erişim maliyetini düşük tutmaya
-
-yardım eder.
+* helps users act with confidence
+* supports fairer access to public resources
+* reduces friction between citizens and institutions
 
 ---
 
-## 🧩 Product Position
+## Supporting the project
 
-* `SocialRightOS` → backend karar motoru
-* `frontend-angular` → frontend
+This project is public-benefit infrastructure.
+
+Support helps to:
+
+* maintain quality
+* keep the platform available
+* reach more people
+* reduce operating costs
+
+---
+
+## Product position
+
+* `SocialRightOS` -> backend decision engine
+* `sosyalhakrehberi.com` -> canonical frontend repo
+* legacy `sosyalhakrehberi-web` -> archive after cutover
 
 Frontend:
 
 * UX
 * SEO
-* yönlendirme
+* routing
+* presentation
 
 Backend:
 
-* karar
-* kural
-* uygunluk hesaplama
+* rules
+* eligibility
+* traceability
+* explanation
 
-## ❗ Core Principle
+## Core principle
 
 > Backend decides, frontend renders
 
 Frontend:
 
-* karar vermez
-* eşik hesaplamaz
-* kural içermez
+* does not decide
+* does not calculate thresholds
+* does not contain policy logic
 
-## Development server
+---
 
-To start a local development server, run:
+## How it works
+
+1. User starts the test
+2. User enters facts
+3. Frontend sends the request to the backend
+4. Backend evaluates
+5. Frontend displays:
+   * decision
+   * explanation
+   * next step
+
+---
+
+## Scaling and sustainability
+
+Each test request triggers backend processing.
+
+As usage grows:
+
+* API load increases
+* hosting cost increases
+* maintenance cost increases
+
+To stay sustainable, these layers must remain reliable:
+
+* backend engine
+* hosting
+* development
+* maintenance
+
+---
+
+## Contributing
+
+Use Issues for:
+
+* bugs
+* policy updates
+* improvements
+
+Use Discussions for:
+
+* ideas
+* feedback
+* public requests
+
+---
+
+## Technical notes
+
+* Angular frontend
+* static deployment on Vercel
+* build output: `dist/syncfusion-angular-app`
+* render-only frontend
+* sponsor/support strategy inherited from legacy frontend and kept here
+
+## Local development
 
 ```bash
-ng serve
+npm ci
+npm run build
+npm run start
 ```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your project for performance and speed.
-
-## Deployment
-
-The repository includes a `vercel.json` file for preview and production deployments on Vercel.
-
-Build output:
-
-```bash
-dist/syncfusion-angular-app
-```
-
-The frontend is render-only. Eligibility and policy decisions remain in the backend API.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
