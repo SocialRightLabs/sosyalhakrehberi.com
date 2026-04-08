@@ -1,0 +1,24 @@
+<section class="stepper card">
+  <div class="stepper-grid">
+    @for (step of steps; track step.key; let index = $index) {
+      <button
+        type="button"
+        class="step"
+        [class.step-active]="index === currentStep"
+        [attr.aria-current]="index === currentStep ? 'step' : null"
+        [attr.aria-label]="(index + 1) + '. adım: ' + step.label"
+        (click)="stepSelected.emit(index)"
+      >
+        <span class="step-index">{{ index + 1 }}</span>
+        <span class="step-copy">
+          <span class="step-label">{{ step.label }}</span>
+          <span class="step-description">{{ step.description }}</span>
+        </span>
+      </button>
+    }
+  </div>
+
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-bar" [style.width.%]="progress"></div>
+  </div>
+</section>

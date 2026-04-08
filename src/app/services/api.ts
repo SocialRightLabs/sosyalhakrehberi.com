@@ -12,7 +12,7 @@ export class Api {
 
   async checkEligibility(payload: unknown): Promise<unknown> {
     return firstValueFrom(
-      this.http.post(`${this.baseUrl}/api/v1/eligibility-check`, payload, {
+      this.http.post(`${this.baseUrl}/api/v1/check`, payload, {
         headers: new HttpHeaders({
           Accept: 'application/json',
           'Content-Type': 'application/json',
