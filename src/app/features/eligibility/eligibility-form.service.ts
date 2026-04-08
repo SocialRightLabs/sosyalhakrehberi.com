@@ -13,6 +13,8 @@ export interface EligibilityFormValue {
   disability_rate: Nullable<number>;
   household_size: Nullable<number>;
   household_income: Nullable<number>;
+  consent_kvkk: Nullable<boolean>;
+  consent_terms: Nullable<boolean>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -33,6 +35,11 @@ export class EligibilityFormService {
       label: 'Hane bilgileri',
       description: 'Hane büyüklüğü, gelir ve sosyal güvence bilgisini ekleyin.',
     },
+    {
+      key: 'onay',
+      label: 'Yasal Onaylar',
+      description: 'KVKK ve Kullanım Koşulları onaylarınızı verin.',
+    },
   ];
 
   readonly form: FormGroup;
@@ -46,6 +53,8 @@ export class EligibilityFormService {
       disability_rate: [null as Nullable<number>, [Validators.min(0), Validators.max(100)]],
       household_size: [null as Nullable<number>, [Validators.min(1), Validators.max(20)]],
       household_income: [null as Nullable<number>, [Validators.min(0), Validators.max(100000000)]],
+      consent_kvkk: [false as Nullable<boolean>, [Validators.requiredTrue]],
+      consent_terms: [false as Nullable<boolean>, [Validators.requiredTrue]],
     });
   }
 
@@ -79,6 +88,8 @@ export class EligibilityFormService {
       disability_rate: null,
       household_size: null,
       household_income: null,
+      consent_kvkk: false,
+      consent_terms: false,
     });
   }
 

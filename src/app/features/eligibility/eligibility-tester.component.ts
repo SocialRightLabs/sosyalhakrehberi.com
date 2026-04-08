@@ -46,6 +46,11 @@ export class EligibilityTesterComponent {
   }
 
   submit(): void {
+    if (this.formService.form.invalid) {
+      this.error.set('Lütfen zorunlu onayları (KVKK ve Kullanım Koşulları) işaretlediğinizden emin olun.');
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
 

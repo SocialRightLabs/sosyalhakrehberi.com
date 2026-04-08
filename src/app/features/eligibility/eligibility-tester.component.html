@@ -106,6 +106,24 @@
                 </select>
               </label>
             }
+
+            @case ('onay') {
+              <div class="legal-consent">
+                <label class="field checkbox-field">
+                  <input type="checkbox" formControlName="consent_kvkk" />
+                  <span class="field-label">
+                    Kişisel ve sağlık verilerimin KVKK kapsamında işlenmesine açık rıza veriyorum. Ayrıca <a href="/aydinlatma-metni" target="_blank">Aydınlatma Metni</a>'ni okudum ve anladım.
+                  </span>
+                </label>
+
+                <label class="field checkbox-field">
+                  <input type="checkbox" formControlName="consent_terms" />
+                  <span class="field-label">
+                    Kullanım Koşulları'nı okudum. Bu platformun bilgilendirme amaçlı bir karar destek sistemi olduğunu, kesin hukuki veya resmi bir tavsiye niteliği taşımadığını ve nihai sonucun resmi kurumlara ait olduğunu kabul ediyorum.
+                  </span>
+                </label>
+              </div>
+            }
           }
         </div>
 
@@ -144,6 +162,9 @@
       </aside>
     </section>
 
-    <footer class="disclaimer">Bu analiz bilgilendirme amaçlıdır. Nihai karar ilgili kurum tarafından verilir.</footer>
+    <footer class="disclaimer">
+      <p><strong>Yasal Uyarı (Sorumluluk Reddi):</strong> Bu platform bilgilendirme amaçlı bir karar destek sistemidir. Kesin hukuki veya resmi bir tavsiye niteliği taşımaz. Nihai sonuçlar ve kararlar sadece resmi kurumlara aittir.</p>
+      <p>Sistem tersine mühendislik ile kopyalanamaz, veriler ticari amaçla otomatik yöntemlerle (scraping) çekilemez.</p>
+    </footer>
   </div>
 </main>
