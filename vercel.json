@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/syncfusion-angular-app",
+  "outputDirectory": "dist/syncfusion-angular-app/browser",
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,

@@ -161,7 +161,7 @@ Use Discussions for:
 
 * Angular frontend
 * static deployment on Vercel
-* build output: `dist/syncfusion-angular-app`
+* build output: `dist/syncfusion-angular-app/browser`
 * render-only frontend
 * sponsor/support strategy inherited from legacy frontend and kept here
 

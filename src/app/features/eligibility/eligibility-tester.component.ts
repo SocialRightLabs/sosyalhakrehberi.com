@@ -1,134 +1,167 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Api } from '../../services/api';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, DestroyRef } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
-type EligibilityResponse = {
-  status?: string;
-  request_id?: string;
-  decision_id?: string;
-  reason?: string;
-  message?: string;
-};
+import { Api } from '../../services/api';
+import { EligibilityFormService } from './eligibility-form.service';
+import { EligibilityStepperComponent } from './eligibility-stepper.component';
+import { EligibilityCheckResult, EligibilityStatus } from './eligibility.types';
+import { ResultCardComponent } from './result-card.component';
 
 @Component({
   standalone: true,
   selector: 'app-eligibility-tester',
-  imports: [CommonModule, FormsModule],
-  template: `
-    <main class="shell">
-      <section class="card">
-        <p class="eyebrow">Sosyal Hak Rehberi</p>
-        <h1>Eligibility Tester</h1>
-        <p class="subtitle">Frontend renders, backend decides.</p>
-        <div class="support-row">
-          <a href="https://sosyalhakrehberi.com" target="_blank" rel="noopener">Website</a>
-          <a href="https://github.com/sponsors/SocialRightLabs" target="_blank" rel="noopener">Support</a>
-          <a href="mailto:info@sosyalhizmetdanismani.com">Contact</a>
-        </div>
-
-        <div class="position-box">
-          <strong>Public value</strong>
-          <p>Understand social-rights eligibility, reduce failed applications, and keep the decision logic in SocialRightOS.</p>
-        </div>
-
-        <label>
-          Benefit code
-          <input [(ngModel)]="benefitCode" name="benefitCode" />
-        </label>
-
-        <label>
-          Household income
-          <input [(ngModel)]="householdIncome" name="householdIncome" type="number" />
-        </label>
-
-        <label>
-          Household size
-          <input [(ngModel)]="householdSize" name="householdSize" type="number" />
-        </label>
-
-        <label>
-          Disability rate
-          <input [(ngModel)]="disabilityRate" name="disabilityRate" type="number" />
-        </label>
-
-        <button type="button" (click)="submit()" [disabled]="loading()">
-          {{ loading() ? 'Sending...' : 'Check Eligibility' }}
-        </button>
-
-        <p class="error" *ngIf="error()">{{ error() }}</p>
-        <pre class="result" *ngIf="result()">{{ result() | json }}</pre>
-
-        <div class="mission-box">
-          <strong>Mission</strong>
-          <p>Make social-rights guidance understandable, auditable, and API-driven.</p>
-        </div>
-
-        <div class="mission-box">
-          <strong>Support this project</strong>
-          <p>Support helps maintain the platform, keep access low-cost, and expand guidance to more users.</p>
-        </div>
-      </section>
-    </main>
-  `,
-  styles: [`
-    :host { display: block; min-height: 100vh; background: linear-gradient(180deg, #0f172a 0%, #111827 100%); color: #e5e7eb; }
-    .shell { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
-    .card { width: min(720px, 100%); background: rgba(17, 24, 39, 0.85); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 24px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
-    .eyebrow { text-transform: uppercase; letter-spacing: .18em; font-size: 12px; color: #94a3b8; }
-    h1 { margin: 8px 0 4px; font-size: 34px; }
-    .subtitle { margin: 0 0 24px; color: #cbd5e1; }
-    .support-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-    .support-row a { color: #93c5fd; text-decoration: none; font-size: 14px; }
-    .position-box { margin-bottom: 18px; padding: 16px; border-radius: 14px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.16); }
-    .position-box p { margin: 6px 0 0; color: #cbd5e1; }
-    label { display: grid; gap: 8px; margin-bottom: 16px; color: #cbd5e1; font-size: 14px; }
-    input { background: #0f172a; color: #f8fafc; border: 1px solid rgba(148, 163, 184, 0.24); border-radius: 12px; padding: 14px 16px; font-size: 16px; }
-    button { width: 100%; margin-top: 8px; border: 0; border-radius: 12px; padding: 14px 16px; background: #22c55e; color: #052e16; font-weight: 700; cursor: pointer; }
-    button:disabled { opacity: .7; cursor: wait; }
-    .error { margin-top: 16px; color: #fca5a5; }
-    .result { margin-top: 16px; padding: 16px; background: #020617; border-radius: 12px; overflow: auto; }
-    .mission-box { margin-top: 18px; padding: 16px; border-radius: 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.16); }
-    .mission-box p { margin: 6px 0 0; color: #cbd5e1; }
-  `],
+  imports: [ReactiveFormsModule, EligibilityStepperComponent, ResultCardComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './eligibility-tester.component.html',
+  styleUrl: './eligibility-tester.component.scss',
 })
 export class EligibilityTesterComponent {
   private readonly api = inject(Api);
+  readonly formService = inject(EligibilityFormService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  loading = signal(false);
-  error = signal('');
-  result = signal<EligibilityResponse | null>(null);
+  readonly currentStep = signal(0);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly result = signal<EligibilityCheckResult | null>(null);
 
-  benefitCode = 'TR_HOME_CARE_ALLOWANCE';
-  householdIncome = 10000;
-  householdSize = 4;
-  disabilityRate = 80;
+  readonly currentStepConfig = computed(() => this.formService.steps[this.currentStep()] ?? this.formService.steps[0]);
 
-  async submit(): Promise<void> {
-    this.loading.set(true);
-    this.error.set('');
-    this.result.set(null);
-
-    const payload = {
-      benefit_code: this.benefitCode,
-      facts: {
-        household_income: Number(this.householdIncome),
-        household_size: Number(this.householdSize),
-        disability_rate: Number(this.disabilityRate),
-      },
-      context: {
-        jurisdiction: 'TR',
-        request_id: `web_${Date.now()}`,
-      },
-    };
-
-    try {
-      const response = (await this.api.checkEligibility(payload)) as EligibilityResponse;
-      this.result.set(response);
-    } catch (error) {
-      this.error.set(this.api.normalizeError(error));
-    } finally {
-      this.loading.set(false);
+  nextStep(): void {
+    if (this.currentStep() < this.formService.steps.length - 1) {
+      this.currentStep.update((value) => value + 1);
     }
+  }
+
+  previousStep(): void {
+    if (this.currentStep() > 0) {
+      this.currentStep.update((value) => value - 1);
+    }
+  }
+
+  selectStep(index: number): void {
+    if (index >= 0 && index < this.formService.steps.length) {
+      this.currentStep.set(index);
+    }
+  }
+
+  submit(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    const payload = this.formService.buildPayload();
+
+    this.api
+      .checkEligibility(payload)
+      .then((response) => {
+        this.result.set(this.normalizeResult(response));
+      })
+      .catch((error: unknown) => {
+        this.error.set(this.api.normalizeError(error));
+      })
+      .finally(() => {
+        this.loading.set(false);
+      });
+  }
+
+  resetFlow(): void {
+    this.formService.reset();
+    this.currentStep.set(0);
+    this.result.set(null);
+    this.error.set(null);
+    this.loading.set(false);
+  }
+
+  private normalizeResult(response: unknown): EligibilityCheckResult {
+    const data = response && typeof response === 'object' ? (response as Record<string, unknown>) : {};
+    const status = this.normalizeStatus(data['status'] ?? data['outcome']);
+
+    return {
+      status,
+      reasons: this.normalizeReasons(data['reasons']),
+      missing_facts: this.normalizeMissingFacts(data['missing_facts']),
+      user_message: typeof data['user_message'] === 'string' ? data['user_message'] : null,
+      disclaimer: typeof data['disclaimer'] === 'string' ? data['disclaimer'] : null,
+      guidance_items: this.normalizeStrings(data['guidance_items']),
+    };
+  }
+
+  private normalizeStatus(value: unknown): EligibilityStatus {
+    const status = String(value ?? '').toUpperCase();
+
+    if (
+      status === 'ELIGIBLE' ||
+      status === 'NOT_ELIGIBLE' ||
+      status === 'NEEDS_INFO' ||
+      status === 'MANUAL_REVIEW' ||
+      status === 'LEGAL_CONFLICT'
+    ) {
+      return status;
+    }
+
+    return 'UNKNOWN';
+  }
+
+  private normalizeReasons(value: unknown): EligibilityCheckResult['reasons'] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value
+      .map((item) => {
+        if (!item || typeof item !== 'object') {
+          return null;
+        }
+
+        const record = item as Record<string, unknown>;
+        const message = typeof record['message'] === 'string' ? record['message'].trim() : '';
+        if (!message) {
+          return null;
+        }
+
+        return {
+          code: typeof record['code'] === 'string' ? record['code'] : null,
+          field: typeof record['field'] === 'string' ? record['field'] : null,
+          message,
+        } as EligibilityCheckResult['reasons'][number];
+      })
+      .filter((item): item is EligibilityCheckResult['reasons'][number] => item !== null);
+  }
+
+  private normalizeMissingFacts(value: unknown): EligibilityCheckResult['missing_facts'] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value
+      .map((item) => {
+        if (!item || typeof item !== 'object') {
+          return null;
+        }
+
+        const record = item as Record<string, unknown>;
+        const message = typeof record['message'] === 'string' ? record['message'].trim() : '';
+        const key =
+          typeof record['key'] === 'string'
+            ? record['key']
+            : typeof record['field'] === 'string'
+              ? record['field']
+              : '';
+
+        if (!message) {
+          return null;
+        }
+
+        return { key, message };
+      })
+      .filter((item): item is EligibilityCheckResult['missing_facts'][number] => item !== null);
+  }
+
+  private normalizeStrings(value: unknown): string[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
   }
 }

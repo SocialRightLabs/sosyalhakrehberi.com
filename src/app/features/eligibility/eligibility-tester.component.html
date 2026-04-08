@@ -1,0 +1,149 @@
+<main class="page">
+  <div class="shell">
+    <header class="hero">
+      <p class="eyebrow">Sosyal Hak Rehberi</p>
+      <h1>Evde Bakım Uygunluk Testi</h1>
+      <p class="lead">Bilgilerinizi girerek evde bakım desteğine uygun olup olmadığınızı öğrenebilirsiniz.</p>
+    </header>
+
+    <app-eligibility-stepper
+      [steps]="formService.steps"
+      [currentStep]="currentStep()"
+      (stepSelected)="selectStep($event)"
+    />
+
+    <section class="layout">
+      <form class="card form-card" [formGroup]="formService.form" (ngSubmit)="submit()">
+        <div class="card-head">
+          <div>
+            <h2>{{ currentStepConfig().label }}</h2>
+            <p>{{ currentStepConfig().description }}</p>
+          </div>
+
+          <button type="button" class="button button-secondary" (click)="resetFlow()">Formu Sıfırla</button>
+        </div>
+
+        <div class="field-grid">
+          @switch (currentStepConfig().key) {
+            @case ('kimlik') {
+              <label class="field">
+                <span class="field-label">Vatandaşlık durumu</span>
+                <select class="control" formControlName="is_turkish_citizen" aria-label="Vatandaşlık durumu">
+                  <option [ngValue]="null">Belirtilmedi</option>
+                  <option [ngValue]="true">Türkiye Cumhuriyeti vatandaşıyım</option>
+                  <option [ngValue]="false">Türkiye Cumhuriyeti vatandaşı değilim</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field-label">İkamet durumu</span>
+                <select class="control" formControlName="is_resident_in_tr" aria-label="İkamet durumu">
+                  <option [ngValue]="null">Belirtilmedi</option>
+                  <option [ngValue]="true">Türkiye'de ikamet ediyorum</option>
+                  <option [ngValue]="false">Türkiye'de ikamet etmiyorum</option>
+                </select>
+              </label>
+            }
+
+            @case ('saglik') {
+              <label class="field">
+                <span class="field-label">Sağlık raporunuz var mı?</span>
+                <select class="control" formControlName="has_valid_health_report" aria-label="Sağlık raporunuz var mı">
+                  <option [ngValue]="null">Belirtilmedi</option>
+                  <option [ngValue]="true">Evet</option>
+                  <option [ngValue]="false">Hayır</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field-label">Engel oranınız (%)</span>
+                <input
+                  class="control"
+                  type="number"
+                  min="0"
+                  max="100"
+                  formControlName="disability_rate"
+                  aria-label="Engel oranınız"
+                  placeholder="İsteğe bağlı"
+                />
+              </label>
+            }
+
+            @case ('hane') {
+              <label class="field">
+                <span class="field-label">Hanedeki kişi sayısı</span>
+                <input
+                  class="control"
+                  type="number"
+                  min="1"
+                  max="20"
+                  formControlName="household_size"
+                  aria-label="Hanedeki kişi sayısı"
+                  placeholder="İsteğe bağlı"
+                />
+              </label>
+
+              <label class="field">
+                <span class="field-label">Hane toplam aylık gelir (TL)</span>
+                <input
+                  class="control"
+                  type="number"
+                  min="0"
+                  max="100000000"
+                  step="0.01"
+                  formControlName="household_income"
+                  aria-label="Hane toplam aylık gelir"
+                  placeholder="İsteğe bağlı"
+                />
+              </label>
+
+              <label class="field">
+                <span class="field-label">Sosyal güvence durumu</span>
+                <select class="control" formControlName="has_social_security" aria-label="Sosyal güvence durumu">
+                  <option [ngValue]="null">Belirtilmedi</option>
+                  <option [ngValue]="true">Var</option>
+                  <option [ngValue]="false">Yok</option>
+                </select>
+              </label>
+            }
+          }
+        </div>
+
+        <div class="actions">
+          <button
+            type="button"
+            class="button button-secondary"
+            [disabled]="currentStep() === 0"
+            (click)="previousStep()"
+          >
+            Geri
+          </button>
+
+          <div class="actions-right">
+            @if (currentStep() < formService.steps.length - 1) {
+              <button type="button" class="button button-primary" (click)="nextStep()">İleri</button>
+            } @else {
+              <button type="submit" class="button button-primary" [disabled]="loading()">
+                {{ loading() ? 'Hesaplanıyor...' : 'Uygunluğumu Hesapla' }}
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (error()) {
+          <div class="alert error" role="alert">{{ error() }}</div>
+        }
+      </form>
+
+      <aside class="side">
+        @if (loading()) {
+          <div class="card loading">Değerlendirme yapılıyor.</div>
+        }
+
+        <app-result-card [result]="result()" />
+      </aside>
+    </section>
+
+    <footer class="disclaimer">Bu analiz bilgilendirme amaçlıdır. Nihai karar ilgili kurum tarafından verilir.</footer>
+  </div>
+</main>
