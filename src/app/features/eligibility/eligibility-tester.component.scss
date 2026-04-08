@@ -199,9 +199,52 @@ h1 {
   color: #0369a1;
 }
 
+.legal-consent {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.checkbox-field {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.checkbox-field input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: #0284c7;
+  cursor: pointer;
+}
+
+.checkbox-field .field-label {
+  font-weight: 400;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.checkbox-field a {
+  color: #0284c7;
+  text-decoration: underline;
+}
+
 .disclaimer {
-  padding: 16px 20px;
-  font-size: 0.95rem;
+  padding: 20px 24px;
+  font-size: 0.85rem;
   line-height: 1.65;
-  color: #475569;
+  color: #64748b;
+  text-align: center;
+}
+
+.disclaimer p {
+  margin: 4px 0;
 }

@@ -27,7 +27,7 @@ export interface EligibilityCheckResult {
 }
 
 export interface EligibilityStep {
-  key: 'kimlik' | 'saglik' | 'hane';
+  key: 'kimlik' | 'saglik' | 'hane' | 'onay';
   label: string;
   description: string;
 }
