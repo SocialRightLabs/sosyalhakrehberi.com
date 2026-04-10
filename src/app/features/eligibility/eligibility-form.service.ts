@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { EligibilityStep } from './eligibility.types';
+import { EligibilityStep, EvaluationRequest } from './eligibility.types';
 
 type Nullable<T> = T | null;
 
@@ -46,19 +46,19 @@ export class EligibilityFormService {
 
   constructor(private readonly fb: FormBuilder) {
     this.form = this.fb.group({
-      is_turkish_citizen: [null as Nullable<boolean>],
-      is_resident_in_tr: [null as Nullable<boolean>],
-      has_valid_health_report: [null as Nullable<boolean>],
-      has_social_security: [null as Nullable<boolean>],
-      disability_rate: [null as Nullable<number>, [Validators.min(0), Validators.max(100)]],
-      household_size: [null as Nullable<number>, [Validators.min(1), Validators.max(20)]],
-      household_income: [null as Nullable<number>, [Validators.min(0), Validators.max(100000000)]],
+      is_turkish_citizen: [null as Nullable<boolean>, [Validators.required]],
+      is_resident_in_tr: [null as Nullable<boolean>, [Validators.required]],
+      has_valid_health_report: [null as Nullable<boolean>, [Validators.required]],
+      has_social_security: [null as Nullable<boolean>, [Validators.required]],
+      disability_rate: [null as Nullable<number>, [Validators.required, Validators.min(0), Validators.max(100)]],
+      household_size: [null as Nullable<number>, [Validators.required, Validators.min(1), Validators.max(20)]],
+      household_income: [null as Nullable<number>, [Validators.required, Validators.min(0), Validators.max(100000000)]],
       consent_kvkk: [false as Nullable<boolean>, [Validators.requiredTrue]],
       consent_terms: [false as Nullable<boolean>, [Validators.requiredTrue]],
     });
   }
 
-  buildPayload(): Record<string, unknown> {
+  buildEvaluationRequest(): EvaluationRequest {
     const value = this.form.getRawValue() as EligibilityFormValue;
 
     return {

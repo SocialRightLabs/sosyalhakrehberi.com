@@ -1,0 +1,79 @@
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900">Doğum Yardımı Ön Değerlendirme</h1>
+    <p class="text-slate-600 mt-2">
+      Bu araç bilgilerinizi alarak SocialRightOS motoru üzerinden uygunluğunuzu denetler. 
+      Bu sistem resmi bir karar değil, tamamen rehberlik amaçlıdır.
+    </p>
+  </header>
+
+  <!-- Sonuç Yoksa Kullanıcı Formunu Render Et -->
+  <form *ngIf="!result()" [formGroup]="testForm" (ngSubmit)="onSubmit()" class="space-y-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+    
+    <fieldset class="space-y-4">
+      <legend class="font-semibold text-lg text-slate-900">Çocuk ve Doğum Bilgileri</legend>
+      
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Çocuk doğdu mu? (Canlı doğum)</label>
+        <select formControlName="child_is_live_birth" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-3 border">
+          <option [ngValue]="null" disabled>Seçiniz</option>
+          <option [ngValue]="true">Evet</option>
+          <option [ngValue]="false">Hayır</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Bu çocuk kaçıncı çocuk?</label>
+        <select formControlName="previous_live_children_count" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-3 border">
+          <option value="" disabled>Seçiniz</option>
+          <option value="1">1. çocuk</option>
+          <option value="2">2. çocuk</option>
+          <option value="3+">3 veya daha fazla</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset class="space-y-4">
+      <legend class="font-semibold text-lg text-slate-900">Vatandaşlık ve İkamet</legend>
+      
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Başvuru sahibi T.C. vatandaşı mı?</label>
+        <select formControlName="applicant_is_turkish_citizen" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-3 border">
+          <option [ngValue]="null" disabled>Seçiniz</option>
+          <option [ngValue]="true">Evet</option>
+          <option [ngValue]="false">Hayır</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Çocuğun KPS (Nüfus) kaydı yapıldı mı?</label>
+        <select formControlName="child_is_kps_registered" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-3 border">
+          <option [ngValue]="null" disabled>Seçiniz</option>
+          <option [ngValue]="true">Evet</option>
+          <option [ngValue]="false">Hayır</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <!-- Hata Mesajı -->
+    <div *ngIf="error()" class="p-4 bg-red-50 text-red-800 rounded-lg">
+      {{ error() }}
+    </div>
+
+    <button 
+      type="submit" 
+      [disabled]="isLoading()"
+      class="w-full bg-slate-900 text-white py-3 px-4 rounded-lg hover:bg-slate-800 transition disabled:opacity-50 font-medium">
+      {{ isLoading() ? 'Motor Değerlendiriyor...' : 'Ön Değerlendirmeyi Başlat' }}
+    </button>
+  </form>
+
+  <!-- SocialRightOS Sonuç Render Alanı -->
+  <div *ngIf="result()" class="space-y-4">
+    <app-result-card [result]="result()" benefitType="TR_BIRTH_GRANT"></app-result-card>
+    
+    <button (click)="resetTest()" class="text-slate-600 underline text-sm hover:text-slate-900 mt-4 block">
+      Yeni Bir Test Başlat
+    </button>
+  </div>
+</div>

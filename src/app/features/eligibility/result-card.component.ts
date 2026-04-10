@@ -1,16 +1,20 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { EligibilityCheckResult, EligibilityStatus } from './eligibility.types';
+import { ActionRoadmapComponent } from './action-roadmap.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-result-card',
   standalone: true,
+  imports: [CommonModule, ActionRoadmapComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './result-card.component.html',
   styleUrl: './result-card.component.scss',
 })
 export class ResultCardComponent {
   @Input() result: EligibilityCheckResult | null = null;
+  @Input() benefitType?: string; // Hangi teste ait rehberi göstereceğimizi bilmek için
 
   tone(): 'eligible' | 'negative' | 'needs-info' | 'review' | 'idle' {
     return this.mapStatus(this.result?.status);
