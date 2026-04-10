@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Api } from '../../services/api';
 import { EligibilityFormService } from './eligibility-form.service';
 import { EligibilityStepperComponent } from './eligibility-stepper.component';
-import { EligibilityCheckResult, EligibilityStatus } from './eligibility.types';
+import { EligibilityCheckResult, EligibilityStatus, GuidanceItem, ReasonItem, MissingFactItem } from './eligibility.types';
 import { ResultCardComponent } from './result-card.component';
 
 @Component({
@@ -24,6 +24,9 @@ export class EligibilityTesterComponent {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly result = signal<EligibilityCheckResult | null>(null);
+
+  // HTML'de app-result-card'a bağlamak için eklendi
+  readonly benefitType = 'TR_HOME_CARE_ALLOWANCE';
 
   readonly currentStepConfig = computed(() => this.formService.steps[this.currentStep()] ?? this.formService.steps[0]);
 
@@ -46,18 +49,13 @@ export class EligibilityTesterComponent {
   }
 
   submit(): void {
-    if (this.formService.form.invalid) {
-      this.error.set('Lütfen zorunlu onayları (KVKK ve Kullanım Koşulları) işaretlediğinizden emin olun.');
-      return;
-    }
-
     this.loading.set(true);
     this.error.set(null);
 
-    const payload = this.formService.buildPayload();
+    const request = this.formService.buildEvaluationRequest();
 
     this.api
-      .checkEligibility(payload)
+      .evaluateBenefit(request)
       .then((response) => {
         this.result.set(this.normalizeResult(response));
       })
@@ -87,7 +85,7 @@ export class EligibilityTesterComponent {
       missing_facts: this.normalizeMissingFacts(data['missing_facts']),
       user_message: typeof data['user_message'] === 'string' ? data['user_message'] : null,
       disclaimer: typeof data['disclaimer'] === 'string' ? data['disclaimer'] : null,
-      guidance_items: this.normalizeStrings(data['guidance_items']),
+      guidance_items: this.normalizeGuidanceItems(data['guidance_items']),
     };
   }
 
@@ -107,66 +105,87 @@ export class EligibilityTesterComponent {
     return 'UNKNOWN';
   }
 
-  private normalizeReasons(value: unknown): EligibilityCheckResult['reasons'] {
+  private normalizeReasons(value: unknown): ReasonItem[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    const reasons: ReasonItem[] = [];
+
+    for (const item of value) {
+      if (!item || typeof item !== 'object') {
+        continue;
+      }
+
+      const record = item as Record<string, unknown>;
+      const message = typeof record['message'] === 'string' ? record['message'].trim() : '';
+
+      if (!message) {
+        continue;
+      }
+
+      reasons.push({
+        code: typeof record['code'] === 'string' ? record['code'] : null,
+        field: typeof record['field'] === 'string' ? record['field'] : null,
+        message,
+      });
+    }
+
+    return reasons;
+  }
+
+  private normalizeMissingFacts(value: unknown): MissingFactItem[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    const facts: MissingFactItem[] = [];
+
+    for (const item of value) {
+      if (!item || typeof item !== 'object') {
+        continue;
+      }
+
+      const record = item as Record<string, unknown>;
+      const message = typeof record['message'] === 'string' ? record['message'].trim() : '';
+      const key =
+        typeof record['key'] === 'string'
+          ? record['key']
+          : typeof record['field'] === 'string'
+            ? record['field']
+            : '';
+
+      if (!message) {
+        continue;
+      }
+
+      facts.push({ key, message });
+    }
+
+    return facts;
+  }
+
+  private normalizeGuidanceItems(value: unknown): GuidanceItem[] {
     if (!Array.isArray(value)) {
       return [];
     }
 
     return value
-      .map((item) => {
-        if (!item || typeof item !== 'object') {
-          return null;
+      .map((item): GuidanceItem | null => {
+        if (typeof item === 'string' && item.trim().length > 0) {
+          return { title: item.trim() };
         }
-
-        const record = item as Record<string, unknown>;
-        const message = typeof record['message'] === 'string' ? record['message'].trim() : '';
-        if (!message) {
-          return null;
+        if (item && typeof item === 'object') {
+          const record = item as Record<string, unknown>;
+          const title = typeof record['title'] === 'string' ? record['title'].trim() : '';
+          if (!title) return null;
+          return {
+            title,
+            ...(typeof record['url'] === 'string' ? { url: record['url'] } : {}),
+          };
         }
-
-        return {
-          code: typeof record['code'] === 'string' ? record['code'] : null,
-          field: typeof record['field'] === 'string' ? record['field'] : null,
-          message,
-        } as EligibilityCheckResult['reasons'][number];
+        return null;
       })
-      .filter((item): item is EligibilityCheckResult['reasons'][number] => item !== null);
-  }
-
-  private normalizeMissingFacts(value: unknown): EligibilityCheckResult['missing_facts'] {
-    if (!Array.isArray(value)) {
-      return [];
-    }
-
-    return value
-      .map((item) => {
-        if (!item || typeof item !== 'object') {
-          return null;
-        }
-
-        const record = item as Record<string, unknown>;
-        const message = typeof record['message'] === 'string' ? record['message'].trim() : '';
-        const key =
-          typeof record['key'] === 'string'
-            ? record['key']
-            : typeof record['field'] === 'string'
-              ? record['field']
-              : '';
-
-        if (!message) {
-          return null;
-        }
-
-        return { key, message };
-      })
-      .filter((item): item is EligibilityCheckResult['missing_facts'][number] => item !== null);
-  }
-
-  private normalizeStrings(value: unknown): string[] {
-    if (!Array.isArray(value)) {
-      return [];
-    }
-
-    return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+      .filter((item): item is GuidanceItem => item !== null);
   }
 }
