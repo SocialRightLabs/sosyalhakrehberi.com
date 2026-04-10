@@ -32,6 +32,8 @@
           </div>
         </div>
 
+        <app-platform-stats-strip [stats]="platformMetrics.stats()" [benefitCode]="config.roadmapKey" [title]="config.title" />
+
         <div class="surface p-6 sm:p-8">
           <div class="flex flex-wrap items-start justify-between gap-4">
             <div>

@@ -38,6 +38,8 @@
           </div>
         </div>
 
+        <app-platform-stats-strip [stats]="platformMetrics.stats()" title="Bu hizmet" [benefitCode]="benefitType" />
+
         <app-eligibility-stepper
           [steps]="formService.steps"
           [currentStep]="currentStep()"

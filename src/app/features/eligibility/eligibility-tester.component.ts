@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { Api } from '../../services/api';
@@ -7,18 +7,21 @@ import { EligibilityStepperComponent } from './eligibility-stepper.component';
 import { EligibilityCheckResult, EligibilityStatus, GuidanceItem, ReasonItem, MissingFactItem } from './eligibility.types';
 import { ResultCardComponent } from './result-card.component';
 import { ExplanationPanelComponent, EligibilityTransparencyDetails } from './explanation-panel.component';
+import { PlatformMetricsService } from './platform-metrics.service';
+import { PlatformStatsStripComponent } from './platform-stats-strip.component';
 
 @Component({
   standalone: true,
   selector: 'app-eligibility-tester',
-  imports: [ReactiveFormsModule, EligibilityStepperComponent, ResultCardComponent, ExplanationPanelComponent],
+  imports: [ReactiveFormsModule, EligibilityStepperComponent, ResultCardComponent, ExplanationPanelComponent, PlatformStatsStripComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './eligibility-tester.component.html',
   styleUrl: './eligibility-tester.component.scss',
 })
-export class EligibilityTesterComponent {
+export class EligibilityTesterComponent implements OnInit {
   private readonly api = inject(Api);
   readonly formService = inject(EligibilityFormService);
+  readonly platformMetrics = inject(PlatformMetricsService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly currentStep = signal(0);
@@ -31,6 +34,10 @@ export class EligibilityTesterComponent {
   readonly benefitType = 'TR_HOME_CARE_ALLOWANCE';
 
   readonly currentStepConfig = computed(() => this.formService.steps[this.currentStep()] ?? this.formService.steps[0]);
+
+  ngOnInit(): void {
+    void this.platformMetrics.recordVisit();
+  }
 
   nextStep(): void {
     if (this.currentStep() < this.formService.steps.length - 1) {
@@ -66,6 +73,8 @@ export class EligibilityTesterComponent {
         if (result.decision_id) {
           this.details.set(await this.loadTransparency(result.decision_id, result));
         }
+
+        void this.platformMetrics.loadStats();
       })
       .catch((error: unknown) => {
         this.error.set(this.api.normalizeError(error));

@@ -43,7 +43,11 @@
             </a>
           </div>
 
-          <dl class="mt-10 grid gap-4 sm:grid-cols-3">
+          <div class="mt-10">
+            <app-platform-stats-strip [stats]="stats" title="Bu platform" />
+          </div>
+
+          <dl class="mt-6 grid gap-4 sm:grid-cols-3">
             @for (stat of quickStats; track stat.label) {
               <div class="rounded-3xl border border-white/12 bg-white/10 p-4 backdrop-blur">
                 <dt class="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/65">{{ stat.label }}</dt>
@@ -137,7 +141,7 @@
       </div>
 
       <div class="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
-        Son güncelleme: <span class="font-semibold text-ink-900">canlı üretim sürümü</span>
+        Canlı etki: <span class="font-semibold text-ink-900">her ziyaret ve her test kullanımı sayacı artırır</span>
       </div>
     </div>
 
@@ -155,6 +159,12 @@
           </div>
 
           <p class="mt-4 text-sm leading-7 text-slate-600">{{ item.description }}</p>
+
+          <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Canlı kullanım</p>
+            <p class="mt-2 text-2xl font-extrabold text-ink-900">{{ formatCount(usageCount(item.benefitCode)) }}</p>
+            <p class="mt-1 text-xs leading-5 text-slate-500">Bu testin toplam kullanım sayısı</p>
+          </div>
 
           <div class="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
             <span class="text-sm font-extrabold text-ink-900">Detayı aç</span>

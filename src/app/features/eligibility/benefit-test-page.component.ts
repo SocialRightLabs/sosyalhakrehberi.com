@@ -8,11 +8,13 @@ import { ExplanationPanelComponent, EligibilityTransparencyDetails } from './exp
 import { BenefitTestConfig, EligibilityCheckResult, EligibilityStatus, TestFieldConfig } from './eligibility.types';
 import { BENEFIT_TEST_CONFIGS } from './benefit-test.config';
 import { ResultCardComponent } from './result-card.component';
+import { PlatformMetricsService } from './platform-metrics.service';
+import { PlatformStatsStripComponent } from './platform-stats-strip.component';
 
 @Component({
   standalone: true,
   selector: 'app-benefit-test-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ResultCardComponent, ExplanationPanelComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ResultCardComponent, ExplanationPanelComponent, PlatformStatsStripComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './benefit-test-page.component.html',
   styleUrl: './benefit-test-page.component.scss',
@@ -21,6 +23,7 @@ export class BenefitTestPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(Api);
+  readonly platformMetrics = inject(PlatformMetricsService);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -36,6 +39,7 @@ export class BenefitTestPageComponent implements OnInit {
     const key = String(this.route.snapshot.data['testKey'] ?? 'TR_BIRTH_GRANT');
     this.config = BENEFIT_TEST_CONFIGS[key] ?? BENEFIT_TEST_CONFIGS['TR_BIRTH_GRANT'];
     this.form = this.buildForm(this.config.fields);
+    void this.platformMetrics.recordVisit();
   }
 
   async submit(): Promise<void> {
@@ -57,6 +61,8 @@ export class BenefitTestPageComponent implements OnInit {
       if (result.decision_id) {
         this.details.set(await this.loadTransparency(result.decision_id, result));
       }
+
+      void this.platformMetrics.loadStats();
     } catch (error: unknown) {
       this.error.set(this.api.normalizeError(error));
     } finally {
