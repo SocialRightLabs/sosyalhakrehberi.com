@@ -158,7 +158,8 @@
           <div class="card loading">Değerlendirme yapılıyor.</div>
         }
 
-        <app-result-card [result]="result()" />
+        <app-result-card [result]="result()" benefitType="TR_HOME_CARE_ALLOWANCE" />
+        <app-explanation-panel [result]="result()" [details]="details()" />
       </aside>
     </section>
 

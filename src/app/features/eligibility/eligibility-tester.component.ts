@@ -6,11 +6,12 @@ import { EligibilityFormService } from './eligibility-form.service';
 import { EligibilityStepperComponent } from './eligibility-stepper.component';
 import { EligibilityCheckResult, EligibilityStatus, GuidanceItem, ReasonItem, MissingFactItem } from './eligibility.types';
 import { ResultCardComponent } from './result-card.component';
+import { ExplanationPanelComponent, EligibilityTransparencyDetails } from './explanation-panel.component';
 
 @Component({
   standalone: true,
   selector: 'app-eligibility-tester',
-  imports: [ReactiveFormsModule, EligibilityStepperComponent, ResultCardComponent],
+  imports: [ReactiveFormsModule, EligibilityStepperComponent, ResultCardComponent, ExplanationPanelComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './eligibility-tester.component.html',
   styleUrl: './eligibility-tester.component.scss',
@@ -24,6 +25,7 @@ export class EligibilityTesterComponent {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly result = signal<EligibilityCheckResult | null>(null);
+  readonly details = signal<EligibilityTransparencyDetails | null>(null);
 
   // HTML'de app-result-card'a bağlamak için eklendi
   readonly benefitType = 'TR_HOME_CARE_ALLOWANCE';
@@ -51,13 +53,19 @@ export class EligibilityTesterComponent {
   submit(): void {
     this.loading.set(true);
     this.error.set(null);
+    this.details.set(null);
 
     const request = this.formService.buildEvaluationRequest();
 
     this.api
       .evaluateBenefit(request)
-      .then((response) => {
-        this.result.set(this.normalizeResult(response));
+      .then(async (response) => {
+        const result = this.normalizeResult(response);
+        this.result.set(result);
+
+        if (result.decision_id) {
+          this.details.set(await this.loadTransparency(result.decision_id, result));
+        }
       })
       .catch((error: unknown) => {
         this.error.set(this.api.normalizeError(error));
@@ -71,6 +79,7 @@ export class EligibilityTesterComponent {
     this.formService.reset();
     this.currentStep.set(0);
     this.result.set(null);
+    this.details.set(null);
     this.error.set(null);
     this.loading.set(false);
   }
@@ -187,5 +196,45 @@ export class EligibilityTesterComponent {
         return null;
       })
       .filter((item): item is GuidanceItem => item !== null);
+  }
+
+  private async loadTransparency(decisionId: string, result: EligibilityCheckResult): Promise<EligibilityTransparencyDetails | null> {
+    try {
+      const [explain, trace] = await Promise.all([
+        this.api.explainDecision(decisionId),
+        this.api.traceDecision(decisionId),
+      ]);
+
+      const legalBasis = explain.explanations
+        .map((item) => [item.law_reference, item.article, item.description].filter((value): value is string => typeof value === 'string' && value.trim() !== '').join(' - '))
+        .filter((item) => item.trim() !== '');
+
+      return {
+        explanations: explain.explanations,
+        traceEvaluations: trace.rule_evaluations,
+        legalBasis: Array.from(new Set(legalBasis)),
+        thresholdsUsed: trace.rule_evaluations.map((item) => ({
+          rule_code: item.rule_code,
+          value: item.value,
+          threshold: item.threshold,
+        })),
+        ruleVersion: this.resolveRuleVersion(result),
+        evaluatedAt: trace.created_at ?? trace.rule_evaluations.find((item) => item.evaluated_at)?.evaluated_at ?? result.evaluated_at ?? null,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private resolveRuleVersion(result: EligibilityCheckResult): string | null {
+    const metadata = result.metadata;
+    if (metadata && typeof metadata === 'object') {
+      const version = metadata['policy_version'];
+      if (typeof version === 'string' && version.trim() !== '') {
+        return version.trim();
+      }
+    }
+
+    return result.rule_version ?? null;
   }
 }
