@@ -2,7 +2,11 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { EvaluationRequest } from '../features/eligibility/eligibility.types';
+import {
+  DecisionExplainabilityResponse,
+  DecisionTraceResponse,
+  EvaluationRequest,
+} from '../features/eligibility/eligibility.types';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +33,22 @@ export class Api {
     };
     return firstValueFrom(
       this.http.post(`${this.baseUrl}/api/v1/check`, payload, { headers: this.headers }),
+    );
+  }
+
+  async explainDecision(decisionId: string): Promise<DecisionExplainabilityResponse> {
+    return firstValueFrom(
+      this.http.get<DecisionExplainabilityResponse>(`${this.baseUrl}/api/v1/decisions/${decisionId}/explain`, {
+        headers: this.headers,
+      }),
+    );
+  }
+
+  async traceDecision(decisionId: string): Promise<DecisionTraceResponse> {
+    return firstValueFrom(
+      this.http.get<DecisionTraceResponse>(`${this.baseUrl}/api/v1/decisions/${decisionId}/trace`, {
+        headers: this.headers,
+      }),
     );
   }
 

@@ -153,4 +153,41 @@ export const ROADMAP_DATA: Record<string, GuidanceRoadmap> = {
       },
     ],
   },
+  TR_DISABILITY_PENSION: {
+    title: 'Engelli Maaşı Başvuru Yol Haritası',
+    caution: 'Bu bilgiler ön değerlendirme amaçlıdır. Nihai karar ilgili kurum tarafından verilir.',
+    institution: 'Aile ve Sosyal Hizmetler İl Müdürlüğü',
+    steps: [
+      {
+        title: 'Rapor ve Gelir Belgeleri',
+        description: 'Sağlık kurulu raporu ve gelir belgelerinizi hazırlayın.',
+      },
+      {
+        title: 'Başvuru',
+        description: 'İl Müdürlüğüne gerekli belgelerle başvurun.',
+      },
+      {
+        title: 'Sosyal İnceleme',
+        description: 'Hane ve belge incelemesi yapılır.',
+      },
+      {
+        title: 'Sonuç',
+        description: 'Karar yazılı olarak bildirilir.',
+      },
+    ],
+    documents: [
+      {
+        category: 'Kimlik Belgeleri',
+        items: ['Nüfus cüzdanı', 'İkametgah belgesi'],
+      },
+      {
+        category: 'Sağlık Belgeleri',
+        items: ['Sağlık kurulu raporu', 'Engellilik oranını gösteren belgeler'],
+      },
+      {
+        category: 'Gelir Belgeleri',
+        items: ['Hane gelir beyanı', 'SGK hizmet dökümü'],
+      },
+    ],
+  },
 };

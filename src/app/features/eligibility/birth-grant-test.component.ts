@@ -31,11 +31,6 @@ export class BirthGrantTestComponent {
   });
 
   onSubmit(): void {
-    if (this.testForm.invalid) {
-      this.error.set('Lütfen eksik alanları doldurun. Kanuni değerlendirme için ekrandaki bilgiler zorunludur.');
-      return;
-    }
-
     this.isLoading.set(true);
     this.error.set(null);
     this.result.set(null);

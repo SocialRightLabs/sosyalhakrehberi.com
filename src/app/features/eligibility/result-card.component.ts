@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { EligibilityCheckResult, EligibilityStatus } from './eligibility.types';
 import { ActionRoadmapComponent } from './action-roadmap.component';
 import { CommonModule } from '@angular/common';
+import { ROADMAP_DATA } from './content/guidance-roadmap.data';
 
 @Component({
   selector: 'app-result-card',
@@ -36,11 +37,13 @@ export class ResultCardComponent {
   }
 
   message(): string {
+    const benefitName = this.benefitName();
+
     switch (this.mapStatus(this.result?.status)) {
       case 'eligible':
-        return 'Evde bakım desteğine başvurabilirsiniz.';
+        return benefitName ? `${benefitName} için başvuru yapabilirsiniz.` : 'Başvuru yapabilirsiniz.';
       case 'negative':
-        return 'Mevcut bilgilerle destek için uygun görünmüyorsunuz.';
+        return benefitName ? `Mevcut bilgilerle ${benefitName} için uygun görünmüyorsunuz.` : 'Mevcut bilgilerle uygun görünmüyorsunuz.';
       case 'needs-info':
         return 'Lütfen aşağıdaki bilgileri tamamlayın:';
       case 'review':
@@ -87,5 +90,14 @@ export class ResultCardComponent {
       default:
         return 'idle';
     }
+  }
+
+  private benefitName(): string | null {
+    if (!this.benefitType) {
+      return null;
+    }
+
+    const roadmap = ROADMAP_DATA[this.benefitType];
+    return roadmap?.title ?? null;
   }
 }
