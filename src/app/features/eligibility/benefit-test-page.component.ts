@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
+import { SeoService } from '../../core/seo/seo.service';
 import { Api } from '../../services/api';
 import { ExplanationPanelComponent, EligibilityTransparencyDetails } from './explanation-panel.component';
 import { BenefitTestConfig, EligibilityCheckResult, EligibilityStatus, TestFieldConfig } from './eligibility.types';
@@ -24,6 +25,7 @@ export class BenefitTestPageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(Api);
   readonly platformMetrics = inject(PlatformMetricsService);
+  private readonly seo = inject(SeoService);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -39,6 +41,7 @@ export class BenefitTestPageComponent implements OnInit {
     const key = String(this.route.snapshot.data['testKey'] ?? 'TR_BIRTH_GRANT');
     this.config = BENEFIT_TEST_CONFIGS[key] ?? BENEFIT_TEST_CONFIGS['TR_BIRTH_GRANT'];
     this.form = this.buildForm(this.config.fields);
+    this.applySeo();
     void this.platformMetrics.recordVisit();
   }
 
@@ -275,5 +278,13 @@ export class BenefitTestPageComponent implements OnInit {
 
   private isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
+  }
+
+  private applySeo(): void {
+    this.seo.setPage({
+      title: this.config.title.replace('Testi', 'Rehberi'),
+      description: `${this.config.subtitle} Dijital sosyal hak rehberi üzerinden eksik bilgiyi tamamlayın, hukuki açıklamayı görün ve başvuru yolunu öğrenin.`,
+      path: this.config.route,
+    });
   }
 }

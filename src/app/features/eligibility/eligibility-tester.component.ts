@@ -9,6 +9,7 @@ import { ResultCardComponent } from './result-card.component';
 import { ExplanationPanelComponent, EligibilityTransparencyDetails } from './explanation-panel.component';
 import { PlatformMetricsService } from './platform-metrics.service';
 import { PlatformStatsStripComponent } from './platform-stats-strip.component';
+import { SeoService } from '../../core/seo/seo.service';
 
 @Component({
   standalone: true,
@@ -22,6 +23,7 @@ export class EligibilityTesterComponent implements OnInit {
   private readonly api = inject(Api);
   readonly formService = inject(EligibilityFormService);
   readonly platformMetrics = inject(PlatformMetricsService);
+  private readonly seo = inject(SeoService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly currentStep = signal(0);
@@ -36,6 +38,11 @@ export class EligibilityTesterComponent implements OnInit {
   readonly currentStepConfig = computed(() => this.formService.steps[this.currentStep()] ?? this.formService.steps[0]);
 
   ngOnInit(): void {
+    this.seo.setPage({
+      title: 'Evde Bakım Rehberi',
+      description: 'Evde bakım desteği için açıklanabilir uygunluk testi, eksik bilgi yönlendirmesi ve başvuru yolu.',
+      path: '/evde-bakim',
+    });
     void this.platformMetrics.recordVisit();
   }
 

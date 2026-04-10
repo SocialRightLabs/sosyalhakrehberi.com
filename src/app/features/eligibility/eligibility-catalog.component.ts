@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { SeoService } from '../../core/seo/seo.service';
 import { TEST_CATALOG } from './benefit-test.config';
 import { PlatformMetricsService } from './platform-metrics.service';
 import { PlatformStatsStripComponent } from './platform-stats-strip.component';
@@ -15,6 +16,7 @@ import { PlatformStatsStripComponent } from './platform-stats-strip.component';
 })
 export class EligibilityCatalogComponent implements OnInit {
   private readonly platformMetrics = inject(PlatformMetricsService);
+  private readonly seo = inject(SeoService);
 
   readonly tests = TEST_CATALOG;
   readonly platformPillars = [
@@ -39,6 +41,12 @@ export class EligibilityCatalogComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.seo.setPage({
+      title: 'Dijital Sosyal Hak Rehberi',
+      description: 'Evde bakım, doğum yardımı, engelli maaşı, GSS ve 65 yaş aylığı için açıklanabilir dijital rehber.',
+      path: '/',
+    });
+    this.seo.setHomeStructuredData();
     void this.platformMetrics.recordVisit();
   }
 

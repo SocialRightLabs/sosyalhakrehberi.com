@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { SeoService } from './core/seo/seo.service';
 
 @Component({
   standalone: true,
@@ -10,8 +11,16 @@ import { Router, RouterOutlet } from '@angular/router';
 })
 export class App implements OnInit {
   private readonly router = inject(Router);
+  private readonly seo = inject(SeoService);
 
   ngOnInit(): void {
+    this.seo.setPage({
+      title: 'Dijital Sosyal Hak Rehberi',
+      description: 'Sosyal haklara erişimi anlatan, başvuru yolunu öğreten ve açıklanabilir karar desteği sunan kamu odaklı platform.',
+      path: '/',
+    });
+    this.seo.setHomeStructuredData();
+
     const route = this.restoreFallbackRoute();
     if (!route) {
       return;
