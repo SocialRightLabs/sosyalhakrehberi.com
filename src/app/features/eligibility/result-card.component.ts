@@ -28,7 +28,7 @@ export class ResultCardComponent {
       case 'negative':
         return 'Sonuç: Uygun Değilsiniz';
       case 'needs-info':
-        return 'Eksik Bilgiler';
+        return 'Eksik Bilgi Gerekli';
       case 'review':
         return 'Uzman İncelemesi Gerekli';
       default:
@@ -45,9 +45,9 @@ export class ResultCardComponent {
       case 'negative':
         return benefitName ? `Mevcut bilgilerle ${benefitName} için uygun görünmüyorsunuz.` : 'Mevcut bilgilerle uygun görünmüyorsunuz.';
       case 'needs-info':
-        return 'Lütfen aşağıdaki bilgileri tamamlayın:';
+        return 'Karar için aşağıdaki bilgileri tamamlayın.';
       case 'review':
-        return 'Durumunuz uzman tarafından değerlendirilmelidir.';
+        return 'Durumunuz uzman incelemesi gerektiriyor.';
       default:
         return 'Bilgilerinizi girerek değerlendirmeyi başlatabilirsiniz.';
     }
@@ -64,15 +64,15 @@ export class ResultCardComponent {
   badge(): string {
     switch (this.mapStatus(this.result?.status)) {
       case 'eligible':
-        return '✓';
+        return 'Uygun';
       case 'negative':
-        return '!';
+        return 'Uygun değil';
       case 'needs-info':
-        return '?';
+        return 'Eksik bilgi';
       case 'review':
-        return '!';
+        return 'İnceleme';
       default:
-        return '•';
+        return 'Beklemede';
     }
   }
 

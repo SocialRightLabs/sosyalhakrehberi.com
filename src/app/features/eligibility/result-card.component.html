@@ -24,7 +24,7 @@
 
   @if (hasReasons()) {
     <div class="result-section">
-      <p class="section-title">Uygun olmama nedenleri:</p>
+      <p class="section-title">Gerekçeler</p>
       <ul class="result-list">
         @for (reason of result?.reasons; track reason.message + ':' + $index) {
           <li>{{ reason.message }}</li>
@@ -35,7 +35,7 @@
 
   @if (hasMissingFacts()) {
     <div class="result-section">
-      <p class="section-title">Lütfen aşağıdaki bilgileri tamamlayın:</p>
+      <p class="section-title">Tamamlanması gereken bilgiler</p>
       <ul class="result-list">
         @for (fact of result?.missing_facts; track fact.key + ':' + $index) {
           <li>{{ fact.message }}</li>

@@ -9,7 +9,7 @@
     >
       <div>
         <p class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Açıklama ve hukuk dayanağı</p>
-        <h3 class="mt-2 text-xl font-semibold text-slate-900">Karar neden böyle çıktı?</h3>
+        <h3 class="mt-2 text-xl font-semibold text-slate-900">Karar nasıl oluştu?</h3>
       </div>
       <span class="text-2xl text-slate-500" aria-hidden="true">{{ isOpen ? '−' : '+' }}</span>
     </button>
@@ -18,7 +18,7 @@
       <div id="eligibility-explanation-panel" class="border-t border-slate-200 px-6 py-6">
         @if (details?.explanations?.length) {
           <div class="mb-6">
-            <h4 class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Kurallar</h4>
+            <h4 class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">İşlenen kural adımları</h4>
             <div class="mt-4 space-y-4">
               @for (item of details?.explanations; track item.rule_code) {
                 <div class="rounded-2xl border border-slate-200 p-4">
@@ -30,20 +30,19 @@
                       [class.bg-rose-50]="!item.passed"
                       [class.text-rose-700]="!item.passed"
                     >
-                      {{ item.passed ? 'Geçti' : 'Kaldı' }}
+                      {{ item.passed ? 'Uygun' : 'Uygun değil' }}
                     </span>
-                    <span class="font-semibold text-slate-900">{{ item.rule_code }}</span>
                   </div>
                   <p class="mt-2 text-sm leading-6 text-slate-600">{{ item.message }}</p>
                   <p class="mt-2 text-sm text-slate-600">
-                    Değer: <span class="font-semibold text-slate-900">{{ item.value ?? '—' }}</span>
+                    Görülen veri: <span class="font-semibold text-slate-900">{{ item.value ?? '—' }}</span>
                     <span class="mx-2 text-slate-300">|</span>
-                    Eşik: <span class="font-semibold text-slate-900">{{ item.threshold ?? '—' }}</span>
+                    Sınır: <span class="font-semibold text-slate-900">{{ item.threshold ?? '—' }}</span>
                   </p>
                   @if (item.law_reference || item.article || item.description) {
                     <div class="mt-3 rounded-xl bg-slate-50 p-3 text-sm leading-6 text-slate-600">
                       @if (item.law_reference) {
-                        <p><span class="font-semibold text-slate-900">Kanun:</span> {{ item.law_reference }}</p>
+                        <p><span class="font-semibold text-slate-900">Mevzuat:</span> {{ item.law_reference }}</p>
                       }
                       @if (item.article) {
                         <p><span class="font-semibold text-slate-900">Madde:</span> {{ item.article }}</p>
@@ -72,7 +71,7 @@
 
         <div class="grid gap-4 md:grid-cols-3">
           <div class="rounded-2xl bg-slate-50 p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Sürüm</p>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Kural sürümü</p>
             <p class="mt-2 text-sm font-semibold text-slate-900">{{ details?.ruleVersion ?? '—' }}</p>
           </div>
           <div class="rounded-2xl bg-slate-50 p-4">
@@ -87,15 +86,13 @@
 
         @if (details?.thresholdsUsed?.length) {
           <div class="mt-6">
-            <h4 class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Kullanılan eşikler</h4>
+            <h4 class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Kullanılan sınırlar</h4>
             <div class="mt-3 space-y-3">
               @for (threshold of details?.thresholdsUsed; track threshold.rule_code) {
                 <div class="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700">
-                  <span class="font-semibold text-slate-900">{{ threshold.rule_code }}</span>
+                  <span class="font-semibold text-slate-900">Görülen veri:</span> {{ threshold.value ?? '—' }}
                   <span class="mx-2 text-slate-300">|</span>
-                  Değer: {{ threshold.value ?? '—' }}
-                  <span class="mx-2 text-slate-300">|</span>
-                  Eşik: {{ threshold.threshold ?? '—' }}
+                  <span class="font-semibold text-slate-900">Sınır:</span> {{ threshold.threshold ?? '—' }}
                 </div>
               }
             </div>
