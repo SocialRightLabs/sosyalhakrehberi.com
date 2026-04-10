@@ -1,0 +1,50 @@
+<section
+  class="card result-card"
+  [class.is-eligible]="tone() === 'eligible'"
+  [class.is-negative]="tone() === 'negative'"
+  [class.is-needs-info]="tone() === 'needs-info'"
+  [class.is-review]="tone() === 'review'"
+>
+  <div class="result-head">
+    <div
+      class="badge"
+      [class.badge-eligible]="tone() === 'eligible'"
+      [class.badge-negative]="tone() === 'negative'"
+      [class.badge-needs-info]="tone() === 'needs-info'"
+      [class.badge-review]="tone() === 'review'"
+    >
+      {{ badge() }}
+    </div>
+
+    <div class="result-copy">
+      <h2>{{ title() }}</h2>
+      <p>{{ message() }}</p>
+    </div>
+  </div>
+
+  @if (hasReasons()) {
+    <div class="result-section">
+      <p class="section-title">Uygun olmama nedenleri:</p>
+      <ul class="result-list">
+        @for (reason of result?.reasons; track reason.message + ':' + $index) {
+          <li>{{ reason.message }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (hasMissingFacts()) {
+    <div class="result-section">
+      <p class="section-title">Lütfen aşağıdaki bilgileri tamamlayın:</p>
+      <ul class="result-list">
+        @for (fact of result?.missing_facts; track fact.key + ':' + $index) {
+          <li>{{ fact.message }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (tone() === 'eligible' && benefitType) {
+    <app-action-roadmap [benefitType]="benefitType" />
+  }
+</section>

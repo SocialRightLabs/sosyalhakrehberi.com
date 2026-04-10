@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sosyal Hak Rehberi</title>
+  <script>
+    (function () {
+      var path = window.location.pathname || '/';
+      var isAsset = path.indexOf('.') !== -1;
+      var isApi = path.indexOf('/api/') === 0;
+      var isRoot = path === '/' || path === '';
+
+      if (!isRoot && !isAsset && !isApi) {
+        var target = '/?__route=' + encodeURIComponent(path + window.location.search + window.location.hash);
+        window.location.replace(target);
+      }
+    }());
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=/" />
+  </noscript>
+</head>
+<body>
+  <p>Yeniden yönlendiriliyor...</p>
+</body>
+</html>
