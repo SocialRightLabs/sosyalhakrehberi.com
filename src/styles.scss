@@ -1,1 +1,69 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:wght@600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(32, 184, 151, 0.08), transparent 24%),
+      radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 20%),
+      linear-gradient(180deg, #eef3f8 0%, #f8fafc 45%, #eef2f7 100%);
+    color: #0b1220;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ::selection {
+    background: rgba(32, 184, 151, 0.18);
+    color: #08111e;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-[28px] border border-white/60 bg-white/85 shadow-soft backdrop-blur;
+  }
+
+  .surface-strong {
+    @apply rounded-[32px] border border-slate-200/80 bg-white shadow-soft;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-extrabold uppercase tracking-[0.32em] text-brand-700;
+  }
+
+  .display-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    @apply font-semibold tracking-[-0.035em] text-ink-900;
+  }
+
+  .lead-copy {
+    @apply text-[15px] leading-8 text-slate-600 md:text-[17px];
+  }
+
+  .glass-divider {
+    @apply border-white/60 bg-white/75 shadow-[0_12px_50px_rgba(15,23,42,0.08)];
+  }
+
+  .focus-ring {
+    @apply outline-none ring-0 transition focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+}
